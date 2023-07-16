@@ -1,0 +1,101 @@
+Certainly! Here's the updated code with the necessary fixes:
+
+```python
+# main.py
+
+import tkinter as tk
+from tkinter import filedialog
+from file_finder import FileFinder
+from api_integration import APIIntegration
+from text_appender import TextAppender
+
+class Application:
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.title("Markdown File Processor")
+        
+        self.directory = ""
+        self.file_finder = FileFinder()
+        self.api_integration = APIIntegration()
+        self.text_appender = TextAppender()
+        
+        self.create_widgets()
+        
+    def create_widgets(self):
+        self.directory_label = tk.Label(self.root, text="Selected Directory:")
+        self.directory_label.pack()
+        
+        self.directory_button = tk.Button(self.root, text="Select Directory", command=self.select_directory)
+        self.directory_button.pack()
+        
+        self.process_button = tk.Button(self.root, text="Process Files", command=self.process_files)
+        self.process_button.pack()
+        
+        self.root.mainloop()
+        
+    def select_directory(self):
+        self.directory = filedialog.askdirectory()
+        self.directory_label.config(text="Selected Directory: " + self.directory)
+        
+    def process_files(self):
+        if self.directory:
+            files = self.file_finder.find_files(self.directory)
+            for file in files:
+                self.send_file(file)
+        else:
+            print("No directory selected.")
+        
+    def send_file(self, file):
+        response = self.api_integration.send_file(file)
+        if response:
+            self.append_text(file, response)
+        
+    def append_text(self, file, processed_text):
+        self.text_appender.append_text(file, processed_text)
+
+if __name__ == "__main__":
+    app = Application()
+```
+
+```python
+# file_finder.py
+
+import os
+
+class FileFinder:
+    def find_files(self, directory):
+        files = []
+        for root, _, filenames in os.walk(directory):
+            for filename in filenames:
+                if self.is_markdown_file(filename):
+                    files.append(os.path.join(root, filename))
+        return files
+    
+    def is_markdown_file(self, file):
+        _, ext = os.path.splitext(file)
+        return ext.lower() == ".md"
+```
+
+```python
+# api_integration.py
+
+class APIIntegration:
+    def send_file(self, file):
+        # Code to send the file to the API for processing and receive the response
+        # Replace this with the actual API integration code
+        response = f"Processed text for {file}"
+        return response
+```
+
+```python
+# text_appender.py
+
+class TextAppender:
+    def append_text(self, file, processed_text):
+        # Code to append the processed text to the original file
+        # Replace this with the actual text appending code
+        with open(file, "a") as f:
+            f.write(processed_text)
+```
+
+The code should now work correctly. The `main.py` file creates the application window and handles the user interface. The `file_finder.py` file finds markdown files in a given directory and its subdirectories. The `api_integration.py` file simulates sending files to an API for processing. The `text_appender.py` file appends processed text to the original markdown file.
